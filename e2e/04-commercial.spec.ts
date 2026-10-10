@@ -62,6 +62,13 @@ test.describe.serial('Comercial y finanzas por la UI', () => {
   })
 
   test('RF-025 / CA-014 · venta de pieza liberada; las piezas en cuarentena no se pueden despachar', async ({ page }) => {
+    // Precondición: una pieza recibida parcialmente (en cuarentena: sin calidad ni ley).
+    const ops = await apiAs('operaciones')
+    const pul = ((await (await ops.get('orders?status=IN_PRODUCTION&pageSize=50')).json()).items as { id: string; product: { code: string } }[]).find((o) => o.product.code === 'PUL-PIE')!
+    const w = await (await ops.post('weighings', { data: { purpose: 'RECEPTION', source: 'MANUAL', grossGrams: 10, manualReason: 'Recepción parcial de prueba' } })).json()
+    expect((await ops.post(`orders/${pul.id}/receipts`, { data: { type: 'PARTIAL', acknowledgeWarnings: true, lines: [{ lineType: 'FINISHED_PRODUCT', units: 1, weighingId: w.id }] } })).status()).toBe(201)
+    const quarantine = (await (await ops.get('finished-goods?status=QUARANTINE')).json()).items as { id: string; code: string }[]
+    expect(quarantine.length).toBeGreaterThan(0)
     await login(page, 'operaciones')
     await page.goto(`/clientes/${doradoId}`)
     await page.getByTestId('account-operations').getByText('Cadenas Gucci').first().click()
@@ -70,6 +77,8 @@ test.describe.serial('Comercial y finanzas por la UI', () => {
     // Las piezas no liberadas aparecen deshabilitadas.
     const enabled = await good.evaluate((el) => [...(el as HTMLSelectElement).options].filter((o) => o.value && !o.disabled).map((o) => o.value))
     expect(enabled.length).toBeGreaterThan(0)
+    const disabled = await good.evaluate((el) => [...(el as HTMLSelectElement).options].filter((o) => o.disabled).map((o) => o.text))
+    expect(disabled.some((t) => t.includes(quarantine[0].code))).toBe(true)
     await good.selectOption(enabled[0])
     await page.getByTestId('sale-units-0').fill('1')
     await page.getByTestId('sale-value-0').fill('3200000')
@@ -78,13 +87,10 @@ test.describe.serial('Comercial y finanzas por la UI', () => {
     await expect(page.getByTestId('op-dispatches')).toContainText('3.200.000')
 
     // Regla en API: una pieza en cuarentena es rechazada aunque se fuerce la petición.
-    const ops = await apiAs('operaciones')
-    const quarantine = (await (await ops.get('finished-goods?status=QUARANTINE')).json()).items
-    if (quarantine.length) {
-      const opId = page.url().split('/').pop()
-      const res = await ops.post('sales', { data: { operationId: opId, dispatchDate: '2026-10-10', lines: [{ finishedGoodId: quarantine[0].id, units: 1, value: 1 }] } })
-      expect(res.status()).toBe(422)
-    }
+    const opId = page.url().split('/').pop()
+    const res = await ops.post('sales', { data: { operationId: opId, dispatchDate: '2026-10-10', lines: [{ finishedGoodId: quarantine[0].id, units: 1, value: 1 }] } })
+    expect(res.status()).toBe(422)
+    expect((await res.json()).error).toBe('PRODUCT_NOT_RELEASED')
   })
 
   test('P14 · registrar egreso con soporte y pago a taller', async ({ page }) => {

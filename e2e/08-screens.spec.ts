@@ -36,24 +36,25 @@ test.describe.serial('Pantallas P01–P20', () => {
     await expect(page.getByRole('link', { name: '¿Olvidaste tu contraseña?' })).toBeVisible()
   })
 
-  const office: [string, string, string, string?][] = [
-    ['P02', 'gerencia', '/dashboard', 'kpi-inventory'],
-    ['P03', 'operaciones', '/balanza', 'entry-weighing'],
-    ['P04', 'gerencia', '/inventario', 'inventory-summary-table'],
+  const office: [string, string, string, string?, RegExp[]?][] = [
+    ['P02', 'gerencia', '/dashboard', 'kpi-inventory', [/Material en talleres/, /Producción en proceso/, /Órdenes retrasadas/, /Alertas abiertas/, /Ventas del mes/, /Utilidad del mes/]],
+    ['P03', 'operaciones', '/balanza', 'entry-weighing', [/Peso actual/, /Captura manual/, /Origen/]],
+    ['P04', 'gerencia', '/inventario', 'inventory-summary-table', [/Comprometido/, /Disponible/, /Tránsito/]],
     ['P05', 'operaciones', '/asignaciones', 'dispatch-workshop'],
     ['P13', 'finanzas', '/clientes', 'customers-table'],
     ['P14', 'finanzas', '/finanzas', 'kpi-income'],
-    ['P15', 'gerencia', '/productividad'],
-    ['P16', 'gerencia', '/rentabilidad'],
+    ['P15', 'gerencia', '/productividad', undefined, [/Gramos terminados/, /Entregas a tiempo/, /TC · Colmenares/, /Mermas/]],
+    ['P16', 'gerencia', '/rentabilidad', undefined, [/Utilidad/, /Costo de lo vendido|Costo material/, /Mano de obra/, /Gastos/]],
     ['P17', 'gerencia', '/alertas', 'alerts-open-count'],
     ['P18', 'admin', '/administracion', 'workshops-table'],
     ['P19', 'operaciones', '/catalogo', 'catalog-grid'],
   ]
-  for (const [code, user, path, testId] of office) {
+  for (const [code, user, path, testId, texts] of office) {
     test(`[${code}] ${path}`, async ({ page }) => {
       const errors = await open(page, user, path)
       await expect(badge(page, code)).toBeVisible()
       if (testId) await expect(page.getByTestId(testId).first()).toBeVisible()
+      for (const t of texts ?? []) await expect(page.locator('main').getByText(t).locator('visible=true').first()).toBeVisible()
       expect(errors).toEqual([])
     })
   }
@@ -88,6 +89,8 @@ test.describe.serial('Pantallas P01–P20', () => {
   test('[P08] confirmación de entrega', async ({ page }) => {
     const errors = await open(page, 'taller.tc', `/taller/entregas/${ids.tcDispatch}`)
     await expect(badge(page, 'P08')).toBeVisible()
+    await expect(page.locator('main').getByText(/g/).first()).toBeVisible()
+    await expect(page.locator('main').getByText(/firma|Firma/).first()).toBeVisible()
     expect(errors).toEqual([])
   })
 
@@ -95,6 +98,9 @@ test.describe.serial('Pantallas P01–P20', () => {
     const errors = await open(page, 'taller.tc', `/taller/ordenes/${ids.tcOrder}`)
     await expect(badge(page, 'P09')).toBeVisible()
     await expect(badge(page, 'P10')).toBeVisible()
+    await expect(page.locator('main').getByText(/Etapas de fabricación/).first()).toBeVisible()
+    await expect(page.locator('main').getByText(/Consumos/).first()).toBeVisible()
+    await expect(page.locator('main').getByText(/Producto terminado/).first()).toBeVisible()
     expect(errors).toEqual([])
   })
 

@@ -27,7 +27,7 @@ test.describe.serial('Administración, catálogo, control y aislamiento por la U
     await selectOption(page, 'user-workshop', 'ALX')
     await page.getByTestId('user-password').fill('TallerAlex.2026')
     const mustChange = page.getByRole('checkbox', { name: /cambiar/i })
-    if (await mustChange.count()) await mustChange.first().click().catch(() => undefined)
+    if (await mustChange.count()) await mustChange.first().click()
     await page.getByTestId('user-save').click()
     await expect(page.getByTestId('users-table')).toContainText('taller.alx')
     await logout(page)
@@ -74,8 +74,10 @@ test.describe.serial('Administración, catálogo, control y aislamiento por la U
     await page.getByTestId('disc-justify-submit').click()
     await page.locator('[data-testid^="disc-approve-"]').first().click()
     await page.getByTestId('disc-review-submit').click()
-    await page.getByTestId('disc-filter-status').selectOption('APPROVED').catch(() => undefined)
+    await page.getByTestId('disc-filter-status').selectOption('APPROVED')
     await expect(page.getByText('Faltante verificado en video de empaque').first()).toBeVisible()
+    const discs = (await (await ops.get(`discrepancies?workshopId=${ws.find((x) => x.code === 'TJ')!.id}&pageSize=50`)).json()).items as { justification: string; status: string; approvedAt: string }[]
+    expect(discs.find((x) => x.justification === 'Faltante verificado en video de empaque')).toMatchObject({ status: 'APPROVED' })
   })
 
   test('CA-007 · un taller no puede ver órdenes de otro taller', async ({ page }) => {
