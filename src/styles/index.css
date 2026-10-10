@@ -1,0 +1,116 @@
+@import 'tailwindcss';
+
+/*
+ * Sistema visual Prestige Gold: tinta cálida casi negra + oro satinado.
+ * Superficies claras para operar muchas horas (tablet/PC); el rail lateral es
+ * oscuro como el mockup conceptual; el oro marca acción primaria y selección.
+ */
+@theme {
+  --font-sans: 'Manrope Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Cormorant Garamond', 'Times New Roman', serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'SF Mono', monospace;
+
+  --color-page: #f7f5f0;
+  --color-surface: #ffffff;
+  --color-sunken: #f1ede4;
+  --color-sidebar: #14110c;
+  --color-sidebar-2: #1d1912;
+  --color-sidebar-active: #2a2418;
+  --color-sidebar-border: #2b261c;
+  --color-sidebar-foreground: #ede6d6;
+  --color-sidebar-muted: #9a8f78;
+
+  --color-border: #e6e0d3;
+  --color-border-strong: #d3cab8;
+
+  --color-ink: #1a1712;
+  --color-ink-secondary: #4a4336;
+  --color-ink-muted: #73695a;
+  --color-ink-placeholder: #a59b89;
+
+  /* Oro Prestige. brand-600 = acción primaria · 700 hover · 800 presionado. */
+  --color-brand-50: #fbf6e9;
+  --color-brand-100: #f5ead0;
+  --color-brand-200: #ead5a1;
+  --color-brand-300: #ddbd6d;
+  --color-brand-400: #cfa84d;
+  --color-brand-500: #c29a3c;
+  --color-brand-600: #a9822c;
+  --color-brand-700: #8d6b22;
+  --color-brand-800: #70541b;
+  --color-brand-900: #3d2e10;
+
+  --color-success: #1f7a45;
+  --color-success-bg: #e6f4ec;
+  --color-warning: #a8590a;
+  --color-warning-bg: #fcf0de;
+  --color-danger: #b4372f;
+  --color-danger-bg: #fbe9e7;
+  --color-info: #1f6b80;
+  --color-info-bg: #e3f1f4;
+
+  --shadow-card: 0 1px 2px rgba(26, 23, 18, 0.05), 0 1px 1px rgba(26, 23, 18, 0.03);
+  --shadow-overlay: 0 10px 30px rgba(26, 23, 18, 0.16), 0 2px 6px rgba(26, 23, 18, 0.08);
+  --shadow-gold: 0 6px 18px rgba(169, 130, 44, 0.28);
+  --radius-sm: 6px;
+  --radius-md: 9px;
+  --radius-lg: 12px;
+
+  --animate-fade-in: fade-in 0.14s ease-out;
+  --animate-scale-in: scale-in 0.14s ease-out;
+  --animate-slide-in-right: slide-in-right 0.18s ease-out;
+  --animate-slide-in-left: slide-in-left 0.18s ease-out;
+  --animate-slide-in-up: slide-in-up 0.16s ease-out;
+  --animate-pulse-gold: pulse-gold 1.6s ease-in-out infinite;
+
+  @keyframes fade-in { from { opacity: 0 } to { opacity: 1 } }
+  @keyframes scale-in { from { opacity: 0; transform: scale(0.97) } to { opacity: 1; transform: scale(1) } }
+  @keyframes slide-in-right { from { transform: translateX(100%) } to { transform: translateX(0) } }
+  @keyframes slide-in-left { from { transform: translateX(-100%) } to { transform: translateX(0) } }
+  @keyframes slide-in-up { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: translateY(0) } }
+  @keyframes pulse-gold { 0%, 100% { box-shadow: 0 0 0 0 rgba(194, 154, 60, 0.45) } 50% { box-shadow: 0 0 0 8px rgba(194, 154, 60, 0) } }
+}
+
+@layer base {
+  html { font-family: var(--font-sans); }
+  body {
+    background-color: var(--color-page);
+    color: var(--color-ink);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  :focus-visible { outline: 2px solid var(--color-brand-500); outline-offset: 1px; }
+  ::placeholder { color: var(--color-ink-placeholder); }
+  ::selection { background-color: var(--color-brand-100); }
+  input[type='number']::-webkit-inner-spin-button { opacity: 0.4; }
+}
+
+@utility eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-ink-muted);
+}
+@utility tnum { font-variant-numeric: tabular-nums; }
+@utility ledger {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+@utility display {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+@utility gold-gradient {
+  background-image: linear-gradient(135deg, #e3c77a 0%, #c29a3c 45%, #8d6b22 100%);
+}
+@utility gold-text {
+  background-image: linear-gradient(135deg, #f0dba0 0%, #c9a24c 50%, #a9822c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
