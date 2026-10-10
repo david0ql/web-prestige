@@ -71,6 +71,11 @@ test.describe('P01 · Acceso y roles', () => {
     await page.getByTestId('login-password').fill('Auditoria.2026!')
     await page.getByTestId('login-submit').click()
     await expect(page).not.toHaveURL(/\/login/)
+    // Restaura la contraseña original para no afectar otras pruebas.
+    const res = await request.post('http://localhost:3301/api/auth/login', { data: { username: 'auditor', password: 'Auditoria.2026!' } })
+    const { accessToken } = await res.json()
+    const back = await request.post('http://localhost:3301/api/auth/change-password', { headers: { Authorization: `Bearer ${accessToken}` }, data: { currentPassword: 'Auditoria.2026!', newPassword: PASSWORD } })
+    expect(back.status()).toBe(204)
   })
 
   test('menú móvil funciona en pantallas pequeñas', async ({ page }) => {

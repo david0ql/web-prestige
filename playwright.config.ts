@@ -45,6 +45,7 @@ export default defineConfig({
         WEB_URL: `http://localhost:${WEB_PORT}`,
         LOGIN_THROTTLE_LIMIT: '2000',
         FORGOT_THROTTLE_LIMIT: '2000',
+        REFRESH_THROTTLE_LIMIT: '5000',
         THROTTLE_LIMIT: '100000',
       },
     },
