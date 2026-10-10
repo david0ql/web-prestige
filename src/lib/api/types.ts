@@ -86,7 +86,7 @@ export interface InsufficiencyLine {
 }
 export interface MediaFile {
   id: string; kind: 'PHOTO' | 'VIDEO' | 'DOCUMENT'; purpose: string; originalName: string; mimeType: string; sizeBytes: number
-  capturedAt: string; caption: string | null; productionOrderId: string | null; stageId: string | null; hidden: boolean
+  capturedAt: string; caption: string | null; productionOrderId: string | null; productId?: string | null; technicalSheetId?: string | null; stageId: string | null; hidden: boolean
   hiddenReason: string | null; publicVisible: boolean; width: number | null; height: number | null; uploadedBy?: { fullName: string }
   urls: { original: string; web: string; thumb: string | null }
 }

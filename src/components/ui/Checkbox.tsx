@@ -11,6 +11,7 @@ interface CheckboxProps {
   className?: string
   id?: string
   'aria-label'?: string
+  'data-testid'?: string
 }
 
 export function Checkbox({ checked, onCheckedChange, label, disabled, className, id, ...props }: CheckboxProps) {

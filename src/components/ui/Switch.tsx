@@ -10,6 +10,7 @@ interface SwitchProps {
   className?: string
   id?: string
   'aria-label'?: string
+  'data-testid'?: string
 }
 
 export function Switch({ checked, onCheckedChange, label, disabled, className, id, ...props }: SwitchProps) {

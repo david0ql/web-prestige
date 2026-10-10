@@ -55,13 +55,30 @@ const indexRoute = createRoute({
 const page = <P extends string>(path: P, loader: () => Promise<{ default: React.ComponentType }>) =>
   createRoute({ getParentRoute: () => appRoute, path, component: lazy(loader) })
 
+/** Parámetros opcionales de búsqueda (enlaces profundos entre pantallas). */
+const optional = (...keys: string[]) => (s: Record<string, unknown>) =>
+  Object.fromEntries(keys.map((k) => [k, typeof s[k] === 'string' ? (s[k] as string) : undefined])) as Record<string, string | undefined>
+
+const dispatchRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: '/asignaciones',
+  validateSearch: optional('orderId'),
+  component: lazy(() => import('@/pages/dispatch/DispatchPage')),
+})
+const ordersRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: '/ordenes',
+  validateSearch: optional('productId', 'workshopId'),
+  component: lazy(() => import('@/pages/orders/OrdersListPage')),
+})
+
 const routes = [
   page('/dashboard', () => import('@/pages/dashboard/OfficeDashboardPage')),
   page('/balanza', () => import('@/pages/scale/EntryPage')),
   page('/inventario', () => import('@/pages/inventory/InventoryPage')),
-  page('/asignaciones', () => import('@/pages/dispatch/DispatchPage')),
+  dispatchRoute,
   page('/despachos', () => import('@/pages/dispatch/DispatchListPage')),
-  page('/ordenes', () => import('@/pages/orders/OrdersListPage')),
+  ordersRoute,
   page('/ordenes/nueva', () => import('@/pages/orders/OrderCreatePage')),
   page('/ordenes/$orderId', () => import('@/pages/orders/OrderDetailPage')),
   page('/ordenes/$orderId/historia', () => import('@/pages/orders/StoryPage')),
