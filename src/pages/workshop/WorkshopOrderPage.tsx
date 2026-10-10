@@ -167,7 +167,7 @@ function OrderView({ o, media, catalogStages, allVars }: { o: OrderDetail; media
       {/* Navegación por secciones */}
       <nav className="sticky top-14 z-20 -mx-4 mb-4 flex gap-1.5 overflow-x-auto border-b border-border bg-page/95 px-4 py-2 backdrop-blur lg:top-14 lg:mx-0 lg:rounded-md lg:border lg:px-2" aria-label="Secciones de la orden">
         {SECTIONS.map(([id, l]) => (
-          <button key={id} onClick={() => scrollTo(id)} className="h-9 shrink-0 rounded-full border border-border bg-surface px-3.5 text-[13px] font-medium text-ink-secondary hover:border-brand-300 hover:text-ink">
+          <button key={id} onClick={() => scrollTo(id)} className="h-11 shrink-0 rounded-full border border-border bg-surface px-3.5 text-[13px] font-medium text-ink-secondary hover:border-brand-300 hover:text-ink">
             {l}
           </button>
         ))}

@@ -77,7 +77,7 @@ export function SummaryTab() {
           </Card>
 
           <Card flush title="Existencias por material" actions={<span className="text-[12px] text-ink-muted">El material en talleres sigue siendo de Prestige Gold (RN-004)</span>}>
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="Tabla desplazable">
               <table data-testid="inventory-summary-table" className="w-full border-collapse text-[13px]">
                 <thead>
                   <tr className="border-y border-border bg-sunken/60">

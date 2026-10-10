@@ -78,7 +78,7 @@ function StageCard({ order, stage, index, media, current, editable, total, compl
         <span
           className={cn(
             'flex size-9 shrink-0 items-center justify-center rounded-full text-[14px] font-bold',
-            done ? 'bg-success text-white' : current ? 'bg-brand-600 text-white' : 'bg-sunken text-ink-muted',
+            done ? 'bg-success text-white' : current ? 'bg-brand-700 text-white' : 'bg-sunken text-ink-muted',
           )}
         >
           {done ? <Check className="size-5" /> : stage.isFinal ? <Flag className="size-4" /> : index + 1}

@@ -158,7 +158,7 @@ export default function OfficeDashboardPage() {
 
             <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
               <Card title="Inventario por material" flush className="xl:col-span-2" actions={<Link to="/inventario" className="text-[12px] font-semibold text-brand-700">Ver inventario</Link>}>
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="Tabla desplazable">
                   <table className="w-full text-[13px]">
                     <thead>
                       <tr className="border-y border-border bg-sunken/60">
@@ -197,7 +197,7 @@ export default function OfficeDashboardPage() {
                         </Link>
                       </li>
                     ))}
-                    {!d.overdue.length && <p className="text-[13px] text-ink-muted">Sin órdenes retrasadas. 👌</p>}
+                    {!d.overdue.length && <li className="text-[13px] text-ink-muted">Sin órdenes retrasadas. 👌</li>}
                   </ul>
                 </Card>
                 <Card title="Alertas recientes" actions={<Link to="/alertas" className="text-[12px] font-semibold text-brand-700">Todas</Link>}>
@@ -211,7 +211,7 @@ export default function OfficeDashboardPage() {
                         <p className="mt-0.5 font-medium text-ink">{a.title}</p>
                       </li>
                     ))}
-                    {!d.recentAlerts.length && <p className="text-[13px] text-ink-muted">Sin alertas abiertas.</p>}
+                    {!d.recentAlerts.length && <li className="text-[13px] text-ink-muted">Sin alertas abiertas.</li>}
                   </ul>
                 </Card>
               </div>

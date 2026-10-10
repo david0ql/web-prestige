@@ -147,7 +147,7 @@ export default function StoryPage() {
                                             type="button"
                                             data-testid="media-toggle-public"
                                             onClick={() => visibility.mutate({ id: m.id, publicVisible: !m.publicVisible })}
-                                            className={cn('flex size-7 items-center justify-center rounded-full text-white shadow', m.publicVisible ? 'bg-brand-600 hover:bg-brand-700' : 'bg-black/60 hover:bg-black/80')}
+                                            className={cn('flex size-7 items-center justify-center rounded-full text-white shadow', m.publicVisible ? 'bg-brand-700 hover:bg-brand-800' : 'bg-black/60 hover:bg-black/80')}
                                           >
                                             {m.publicVisible ? <Globe className="size-3.5" /> : <GlobeLock className="size-3.5" />}
                                           </button>

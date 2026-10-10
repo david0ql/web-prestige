@@ -59,7 +59,7 @@ export function MultiSelect({
         )}
       >
         {selectedOptions.length === 0 ? (
-          <span className="px-0.5 text-ink-placeholder">{placeholder}</span>
+          <span className="px-0.5 text-ink-muted">{placeholder}</span>
         ) : (
           <span className="flex flex-wrap items-center gap-1">
             {selectedOptions.map((option) => (
@@ -114,7 +114,7 @@ export function MultiSelect({
                     <span
                       className={cn(
                         'flex size-4 items-center justify-center rounded-[4px] border',
-                        checked ? 'border-brand-600 bg-brand-600 text-white' : 'border-border-strong bg-surface',
+                        checked ? 'border-brand-700 bg-brand-700 text-white' : 'border-border-strong bg-surface',
                       )}
                     >
                       {checked && <Check className="size-3" />}

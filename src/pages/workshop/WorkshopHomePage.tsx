@@ -39,7 +39,7 @@ function TaskRow({ t, i }: { t: WorkshopTask; i: number }) {
         <p className="truncate text-[13px] text-ink-muted">{t.detail}</p>
         {t.priority === 'HIGH' && <span className="mt-1 inline-block rounded-sm bg-danger-bg px-1.5 py-0.5 text-[11px] font-semibold text-danger">Prioridad alta</span>}
       </div>
-      <span className="hidden shrink-0 items-center gap-1 rounded-sm bg-brand-600 px-3 py-2 text-[13px] font-semibold text-white sm:flex">
+      <span className="hidden shrink-0 items-center gap-1 rounded-sm bg-brand-700 px-3 py-2 text-[13px] font-semibold text-white sm:flex">
         {meta.cta} <ChevronRight className="size-4" />
       </span>
       <ChevronRight className="size-5 shrink-0 text-ink-placeholder sm:hidden" />

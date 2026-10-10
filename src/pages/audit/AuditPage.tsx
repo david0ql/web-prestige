@@ -53,7 +53,7 @@ function Diff({ before, after }: { before: Record<string, unknown> | null; after
   const changed = keys.filter((k) => show(before?.[k]) !== show(after?.[k]))
   const ordered = [...changed, ...keys.filter((k) => !changed.includes(k))]
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="Tabla desplazable">
       <table className="w-full text-[12px]">
         <thead>
           <tr className="text-left">
@@ -138,7 +138,7 @@ export default function AuditPage() {
       <Card flush>
         <QueryState isLoading={list.isLoading} error={list.error} onRetry={() => void list.refetch()}>
           {list.data?.items.length ? (
-            <div className="overflow-x-auto" data-testid="audit-table">
+            <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="Tabla desplazable" data-testid="audit-table">
               <table className="w-full border-collapse text-[13px]">
                 <thead>
                   <tr className="border-b border-border bg-sunken/60 text-left">

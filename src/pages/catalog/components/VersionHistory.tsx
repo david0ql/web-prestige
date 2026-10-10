@@ -56,7 +56,7 @@ export function VersionHistory({ versions, variables, photos, currentVersion }: 
                     <Link to="/ordenes/$orderId" params={{ orderId: v.sourceOrderId }} className="font-medium text-brand-700 hover:underline">ver orden origen</Link>
                   </p>
                 )}
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="Tabla desplazable">
                   <table className="w-full text-[12px]">
                     <thead>
                       <tr className="border-b border-border text-left">

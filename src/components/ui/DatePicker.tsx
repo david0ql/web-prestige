@@ -88,7 +88,7 @@ function CalendarGrid({ onSelectDay, isSelected, isInRange, initialMonth }: Cale
                 isSameMonth(day, viewMonth) && !selected && 'text-ink hover:bg-sunken',
                 inRange && !selected && 'rounded-none bg-brand-50 text-brand-800',
                 isToday(day) && !selected && 'font-semibold text-brand-600',
-                selected && 'bg-brand-600 font-medium text-white',
+                selected && 'bg-brand-700 font-medium text-white',
               )}
             >
               {format(day, 'd')}

@@ -46,9 +46,9 @@ export default function LoginPage() {
         <FormField label="Usuario o correo" error={formState.errors.username}>
           <Input inputSize="lg" autoComplete="username" autoFocus data-testid="login-username" {...register('username')} />
         </FormField>
-        <FormField label="Contraseña" error={formState.errors.password}>
+        <FormField label="Contraseña" error={formState.errors.password} htmlFor="login-password">
           <div className="relative">
-            <Input inputSize="lg" type={show ? 'text' : 'password'} autoComplete="current-password" data-testid="login-password" className="pr-10" {...register('password')} />
+            <Input inputSize="lg" id="login-password" type={show ? 'text' : 'password'} autoComplete="current-password" data-testid="login-password" className="pr-10" {...register('password')} />
             <button type="button" onClick={() => setShow((s) => !s)} className="absolute top-1/2 right-2 -translate-y-1/2 rounded p-1 text-ink-muted hover:text-ink" aria-label={show ? 'Ocultar contraseña' : 'Mostrar contraseña'}>
               {show ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
             </button>
@@ -66,7 +66,7 @@ export default function LoginPage() {
           <Link to="/recuperar" className="text-[13px] font-medium text-brand-700 hover:underline">¿Olvidaste tu contraseña?</Link>
         </div>
       </form>
-      <p className="mt-10 text-center text-[11px] text-ink-placeholder">Acceso seguro · sesión cifrada · bitácora de accesos</p>
+      <p className="mt-10 text-center text-[11px] text-ink-muted">Acceso seguro · sesión cifrada · bitácora de accesos</p>
     </AuthLayout>
   )
 }

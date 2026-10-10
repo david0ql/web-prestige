@@ -68,7 +68,7 @@ export function CommitmentText({ order, className }: { order: Pick<ProductionOrd
 export function ProgressBar({ value, className, tone = 'gold' }: { value: number; className?: string; tone?: 'gold' | 'danger' | 'success' }) {
   const pct = Math.max(0, Math.min(100, value))
   return (
-    <div className={cn('h-2 w-full overflow-hidden rounded-full bg-sunken', className)} role="progressbar" aria-valuenow={Math.round(pct)} aria-valuemin={0} aria-valuemax={100}>
+    <div className={cn('h-2 w-full overflow-hidden rounded-full bg-sunken', className)} role="progressbar" aria-label={`Avance ${Math.round(pct)}%`} aria-valuenow={Math.round(pct)} aria-valuemin={0} aria-valuemax={100}>
       <div className={cn('h-full rounded-full transition-all', tone === 'gold' && 'gold-gradient', tone === 'danger' && 'bg-danger', tone === 'success' && 'bg-success')} style={{ width: `${pct}%` }} />
     </div>
   )
@@ -130,7 +130,7 @@ export function DispatchCard({ dispatch }: { dispatch: MaterialDispatch }) {
         </p>
       </div>
       {pending ? (
-        <span className="hidden shrink-0 rounded-sm bg-brand-600 px-3 py-2 text-[13px] font-semibold text-white sm:inline">Confirmar</span>
+        <span className="hidden shrink-0 rounded-sm bg-brand-700 px-3 py-2 text-[13px] font-semibold text-white sm:inline">Confirmar</span>
       ) : (
         <ChevronRight className="size-5 shrink-0 text-ink-placeholder" />
       )}

@@ -16,6 +16,8 @@ export function NativeSelect({ options, placeholder, invalid, className, ref, ..
       <select
         ref={ref}
         aria-invalid={invalid || undefined}
+        // Nombre accesible por defecto (filtros sin etiqueta visible): la primera opción describe el filtro.
+        aria-label={props['aria-label'] ?? (props.id || props['aria-labelledby'] ? undefined : (placeholder || options[0]?.label))}
         className={cn(
           'h-8 w-full cursor-pointer appearance-none rounded-sm border border-border-strong bg-surface pr-8 pl-2.5 text-[13px] text-ink',
           'transition-colors duration-120 hover:border-ink-placeholder disabled:cursor-not-allowed disabled:bg-sunken disabled:text-ink-muted',

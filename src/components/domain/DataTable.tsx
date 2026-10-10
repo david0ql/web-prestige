@@ -35,7 +35,7 @@ export function DataTable<T>({ columns, rows, rowKey, loading, onRowClick, empty
   }
   return (
     <div data-testid={testId}>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="Tabla desplazable">
         <table className="w-full border-collapse text-[13px]">
           <thead>
             <tr className="border-b border-border bg-sunken/60">

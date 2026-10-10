@@ -44,7 +44,7 @@ export function PathBar({ stages, currentIndex, onStageClick, className }: PathB
               clickable && 'cursor-pointer',
               done && 'bg-brand-100 text-brand-800',
               done && clickable && 'hover:bg-brand-200',
-              current && 'bg-brand-600 text-white',
+              current && 'bg-brand-700 text-white',
               !done && !current && 'bg-sunken text-ink-muted',
               !done && !current && clickable && 'hover:bg-border',
             )}

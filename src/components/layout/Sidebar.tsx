@@ -14,7 +14,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
     <nav className="flex-1 space-y-5 overflow-y-auto px-3 py-4" aria-label="Navegación principal">
       {sections.map((s) => (
         <div key={s.title}>
-          <p className="mb-1.5 px-2 text-[10px] font-bold tracking-[0.16em] text-sidebar-muted/80 uppercase">{s.title}</p>
+          <p className="mb-1.5 px-2 text-[10px] font-bold tracking-[0.16em] text-sidebar-muted uppercase">{s.title}</p>
           <ul className="space-y-0.5">
             {s.items.map((i) => {
               const active = path === i.to || (i.to !== '/taller' && path.startsWith(`${i.to}/`))
@@ -32,7 +32,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
                   >
                     <i.icon className={cn('size-4 shrink-0', active ? 'text-brand-400' : 'text-sidebar-muted group-hover:text-sidebar-foreground')} />
                     <span className="flex-1 truncate">{i.label}</span>
-                    {i.code && <span className="text-[9px] font-semibold text-sidebar-muted/70">{i.code}</span>}
+                    {i.code && <span className="text-[10px] font-semibold text-sidebar-muted">{i.code}</span>}
                   </Link>
                 </li>
               )

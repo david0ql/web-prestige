@@ -99,7 +99,7 @@ export function KardexTab() {
               {k.lines.length === 0 ? (
                 <EmptyState icon={FileSpreadsheet} title="Sin movimientos en el periodo" description={`Saldo sin cambios: ${formatGrams(k.opening)}`} />
               ) : (
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="Tabla desplazable">
                   <table data-testid="kardex-table" className="w-full border-collapse text-[13px]">
                     <thead>
                       <tr className="border-y border-border bg-sunken/60">
