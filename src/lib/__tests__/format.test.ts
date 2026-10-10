@@ -20,6 +20,8 @@ describe('lectura de balanza', () => {
   it('interpreta tramas estables e inestables', () => {
     expect(parseScaleReading('ST,GS,+  1000.25 g')).toEqual({ grams: 1000.25, stable: true })
     expect(parseScaleReading('US,GS,+  12.5 kg')).toEqual({ grams: 12500, stable: false })
+    expect(parseScaleReading('S D      100.07 g')).toEqual({ grams: 100.07, stable: false })
+    expect(parseScaleReading('S S   10 dwt')?.grams).toBeCloseTo(15.5517, 4)
     expect(parseScaleReading('ERR')).toBeNull()
   })
 })
