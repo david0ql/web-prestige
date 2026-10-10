@@ -94,7 +94,7 @@ export default function WorkshopHomePage() {
               <Stat testId="kpi-custody" icon={Boxes} tone="gold" label="En custodia" value={formatGrams(d.kpis.custodyGrams)} hint="Material bajo tu responsabilidad" />
             </div>
 
-            <div className="grid gap-5 lg:grid-cols-[1.35fr_1fr]">
+            <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1.35fr_1fr]">
               <div className="space-y-5">
                 <section>
                   <div className="mb-2 flex items-center justify-between">

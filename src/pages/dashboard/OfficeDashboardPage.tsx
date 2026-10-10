@@ -6,7 +6,7 @@ import { api } from '@/lib/api/client'
 import type { Alert } from '@/lib/api/types'
 import { formatDate, formatDateTime, formatGrams, formatMoney } from '@/lib/format'
 import { ALERT_SEVERITY } from '@/lib/labels'
-import { GOLD, GRID, SERIES, axisProps } from '@/lib/chart'
+import { GOLD, GRID, SERIES, axisProps, legendInk } from '@/lib/chart'
 import { usePermission } from '@/lib/auth/store'
 import { PageHeader } from '@/components/domain/PageHeader'
 import { Stat } from '@/components/domain/Stat'
@@ -71,7 +71,7 @@ export default function OfficeDashboardPage() {
               )}
             </div>
 
-            <div className="grid gap-4 lg:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
               <Card title="Distribución de material por taller (g)">
                 {d.charts.materialByWorkshop.length ? (
                   <div className="h-64" role="img" aria-label="Gramos en custodia por taller">
@@ -112,7 +112,7 @@ export default function OfficeDashboardPage() {
               </Card>
             </div>
 
-            <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.4fr_1fr]">
               {financial && (
                 <Card title="Rentabilidad mensual (últimos 6 meses)">
                   {d.charts.monthlyProfitability.length ? (
@@ -123,7 +123,7 @@ export default function OfficeDashboardPage() {
                           <XAxis dataKey="month" {...axisProps} />
                           <YAxis {...axisProps} width={72} tickFormatter={(v) => formatMoney(Number(v)).replace(/\s?COP/, '')} />
                           <Tooltip content={<ChartTooltip format={(v) => formatMoney(v)} />} />
-                          <Legend iconType="circle" wrapperStyle={{ fontSize: 12, color: '#4a4336' }} />
+                          <Legend formatter={legendInk} iconType="circle" wrapperStyle={{ fontSize: 12, color: '#4a4336' }} />
                           <Line type="monotone" dataKey="revenue" name="Ventas" stroke={SERIES[2]} strokeWidth={2} dot={{ r: 4 }} />
                           <Line type="monotone" dataKey="costs" name="Costos de producción" stroke={GOLD} strokeWidth={2} dot={{ r: 4 }} />
                           <Line type="monotone" dataKey="expenses" name="Gastos operativos" stroke={SERIES[4]} strokeWidth={2} dot={{ r: 4 }} />
@@ -156,7 +156,7 @@ export default function OfficeDashboardPage() {
               </Card>
             </div>
 
-            <div className="grid gap-4 xl:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
               <Card title="Inventario por material" flush className="xl:col-span-2" actions={<Link to="/inventario" className="text-[12px] font-semibold text-brand-700">Ver inventario</Link>}>
                 <div className="overflow-x-auto">
                   <table className="w-full text-[13px]">

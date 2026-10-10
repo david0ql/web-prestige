@@ -15,3 +15,6 @@ export function colorFor(key: string, keys: string[]) {
 }
 
 export const axisProps = { stroke: AXIS, fontSize: 11, tickLine: false, axisLine: false } as const
+
+/** Las etiquetas de la leyenda van en tinta; el color de la serie queda solo en el marcador. */
+export const legendInk = (value: unknown) => <span style={{ color: '#4a4336' }}>{String(value)}</span>

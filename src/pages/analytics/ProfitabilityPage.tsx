@@ -6,7 +6,7 @@ import { api } from '@/lib/api/client'
 import type { TabularReport } from '@/lib/api/types'
 import { formatMoney, formatPercent, todayIso } from '@/lib/format'
 import { useCustomers } from '@/lib/hooks/useMasters'
-import { GOLD, GRID, SERIES, axisProps } from '@/lib/chart'
+import { GOLD, GRID, SERIES, axisProps, legendInk } from '@/lib/chart'
 import { cn } from '@/lib/cn'
 import { PageHeader } from '@/components/domain/PageHeader'
 import { Stat } from '@/components/domain/Stat'
@@ -88,7 +88,7 @@ export default function ProfitabilityPage() {
                         <XAxis dataKey="month" {...axisProps} />
                         <YAxis {...axisProps} width={64} tickFormatter={(v) => shortMoney(Number(v))} />
                         <Tooltip content={<ChartTooltip format={(v) => formatMoney(v)} />} />
-                        <Legend iconType="circle" wrapperStyle={{ fontSize: 12, color: '#4a4336' }} />
+                        <Legend formatter={legendInk} iconType="circle" wrapperStyle={{ fontSize: 12, color: '#4a4336' }} />
                         <Line type="monotone" dataKey="revenue" name="Ventas" stroke={SERIES[2]} strokeWidth={2} dot={{ r: 4 }} />
                         <Line type="monotone" dataKey="costs" name="Costos de producción" stroke={GOLD} strokeWidth={2} dot={{ r: 4 }} />
                         <Line type="monotone" dataKey="expenses" name="Gastos operativos" stroke={SERIES[4]} strokeWidth={2} dot={{ r: 4 }} />

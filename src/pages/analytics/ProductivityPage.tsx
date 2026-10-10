@@ -5,7 +5,7 @@ import { CalendarCheck, Clock, Factory, Package, Percent, TrendingDown, Triangle
 import { api } from '@/lib/api/client'
 import type { TabularReport } from '@/lib/api/types'
 import { formatGrams, formatNumber, formatPercent, todayIso } from '@/lib/format'
-import { GOLD, GRID, SERIES, axisProps, colorFor } from '@/lib/chart'
+import { GOLD, GRID, SERIES, axisProps, colorFor, legendInk } from '@/lib/chart'
 import { PageHeader } from '@/components/domain/PageHeader'
 import { Stat } from '@/components/domain/Stat'
 import { QueryState } from '@/components/domain/QueryState'
@@ -115,7 +115,7 @@ export default function ProductivityPage() {
                       <XAxis dataKey="workshop" {...axisProps} />
                       <YAxis {...axisProps} allowDecimals={false} width={36} />
                       <Tooltip cursor={{ fill: '#f1ede4' }} content={<ChartTooltip format={(v) => `${formatNumber(v)} órdenes`} />} />
-                      <Legend iconType="circle" wrapperStyle={{ fontSize: 12, color: '#4a4336' }} />
+                      <Legend formatter={legendInk} iconType="circle" wrapperStyle={{ fontSize: 12, color: '#4a4336' }} />
                       <Bar dataKey="onTime" name="A tiempo" stackId="c" fill={SERIES[2]} maxBarSize={48} />
                       <Bar dataKey="late" name="Retrasadas" stackId="c" fill={SERIES[5]} radius={[4, 4, 0, 0]} maxBarSize={48} />
                     </BarChart>
@@ -134,7 +134,7 @@ export default function ProductivityPage() {
                       <XAxis dataKey="month" {...axisProps} />
                       <YAxis {...axisProps} tickFormatter={(v) => shortGrams(Number(v))} width={60} />
                       <Tooltip cursor={{ fill: '#f1ede4' }} content={<ChartTooltip format={(v) => formatGrams(v)} />} />
-                      {monthly.workshops.length >= 2 && <Legend iconType="circle" wrapperStyle={{ fontSize: 12, color: '#4a4336' }} />}
+                      {monthly.workshops.length >= 2 && <Legend formatter={legendInk} iconType="circle" wrapperStyle={{ fontSize: 12, color: '#4a4336' }} />}
                       {monthly.workshops.map((w) => <Bar key={w} dataKey={w} name={w} fill={colorFor(w, monthly.workshops)} radius={[4, 4, 0, 0]} maxBarSize={36} />)}
                     </BarChart>
                   </ResponsiveContainer>

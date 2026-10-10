@@ -10,7 +10,7 @@ import { useDebounced } from '@/lib/hooks/useDebounced'
 import { useFinanceCategories, useWorkshops } from '@/lib/hooks/useMasters'
 import { formatDate, formatDateTime, formatGrams, formatMoney, monthStartIso, todayIso } from '@/lib/format'
 import { TX_STATUS } from '@/lib/labels'
-import { GRID, SERIES, axisProps } from '@/lib/chart'
+import { GRID, SERIES, axisProps, legendInk } from '@/lib/chart'
 import { PageHeader } from '@/components/domain/PageHeader'
 import { Stat } from '@/components/domain/Stat'
 import { DataTable } from '@/components/domain/DataTable'
@@ -131,7 +131,7 @@ function SplitChart({ title, data }: { title: string; data: { key: string; incom
               <XAxis type="number" {...axisProps} tickFormatter={(v) => shortMoney(Number(v))} />
               <YAxis type="category" dataKey="key" {...axisProps} width={150} />
               <Tooltip cursor={{ fill: '#f5ead0' }} content={<ChartTooltip format={(v) => formatMoney(v)} />} />
-              <Legend iconType="circle" wrapperStyle={{ fontSize: 12, color: '#4a4336' }} />
+              <Legend formatter={legendInk} iconType="circle" wrapperStyle={{ fontSize: 12, color: '#4a4336' }} />
               <Bar dataKey="income" name="Ingresos" fill={SERIES[2]} radius={[0, 4, 4, 0]} maxBarSize={16} />
               <Bar dataKey="expense" name="Egresos" fill={SERIES[5]} radius={[0, 4, 4, 0]} maxBarSize={16} />
             </BarChart>
