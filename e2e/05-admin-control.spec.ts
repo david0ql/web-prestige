@@ -97,7 +97,14 @@ test.describe.serial('Administración, catálogo, control y aislamiento por la U
     await page.goto('/alertas')
     await page.getByTestId('alerts-run-checks').click()
     await expect(page.getByTestId('alert-item').first()).toBeVisible()
-    await page.getByTestId('alert-ack').first().click()
+    const first = page.getByTestId('alert-item').filter({ has: page.getByTestId('alert-ack') }).first()
+    const title = (await first.locator('p').first().textContent())!.trim()
+    const before = await page.getByTestId('alert-ack').count()
+    await first.getByTestId('alert-ack').click()
+    await expect(page.getByTestId('alert-ack')).toHaveCount(before - 1)
+    const ops = await apiAs('operaciones')
+    const acked = ((await (await ops.get('alerts?status=ACKNOWLEDGED&pageSize=100')).json()).items as { title: string; status: string }[]).find((a) => a.title === title)
+    expect(acked?.status).toBe('ACKNOWLEDGED')
   })
 
   test('RF-036 · bitácora de auditoría consultable por el auditor', async ({ page }) => {

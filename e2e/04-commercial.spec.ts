@@ -106,6 +106,22 @@ test.describe.serial('Comercial y finanzas por la UI', () => {
     await page.getByRole('tab', { name: 'Transacciones' }).click()
     await page.getByTestId('tx-search').fill('Mantenimiento de balanza')
     await expect(page.getByTestId('tx-table')).toContainText('350.000')
+
+    // Pago a taller desde «Pagos a talleres»: salda la mano de obra aprobada.
+    const fin = await apiAs('finanzas')
+    const payables = (await (await fin.get('finance/workshop-payables')).json()) as { workshop: { code: string }; balance: number; paid: number }[]
+    const due = payables.find((p) => p.balance > 0)!
+    expect(due).toBeTruthy()
+    await page.getByRole('tab', { name: 'Pagos a talleres' }).click()
+    await page.getByTestId(`pay-workshop-${due.workshop.code}`).click()
+    await expect(page.getByTestId('tx-amount')).toHaveValue(String(due.balance))
+    await page.getByTestId('tx-support').fill('TRF-TALLER-01')
+    await page.getByTestId('tx-submit').click()
+    await page.getByTestId('tx-finish').click()
+    const after = ((await (await fin.get('finance/workshop-payables')).json()) as typeof payables).find((p) => p.workshop.code === due.workshop.code)!
+    expect(after.balance).toBe(0)
+    expect(after.paid).toBe(due.paid + due.balance)
+    await expect(page.getByTestId(`pay-workshop-${due.workshop.code}`)).toHaveCount(0)
   })
 
   test('P15/P16/RF-040 · productividad, rentabilidad y exportación', async ({ page }) => {

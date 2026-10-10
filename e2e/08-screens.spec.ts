@@ -79,17 +79,43 @@ test.describe.serial('Pantallas P01–P20', () => {
     expect(errors).toEqual([])
   })
 
+  test('[P02] [RF-033] el dashboard muestra los valores consolidados del servidor', async ({ page }) => {
+    await open(page, 'gerencia', '/dashboard')
+    const d = await (await (await apiAs('gerencia')).get('dashboard/office')).json()
+    const g = (n: number) => `${new Intl.NumberFormat('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 4 }).format(n)} g`
+    await expect(page.getByTestId('kpi-inventory')).toContainText(g(d.kpis.totalInventoryGrams))
+    await expect(page.getByTestId('kpi-workshops')).toContainText(g(d.kpis.workshopsGrams))
+    await expect(page.locator('main').getByText(`${d.kpis.ordersInProduction} órdenes`).first()).toBeVisible()
+    const money = (n: number) => new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 }).format(n)
+    await expect(page.locator('main').getByText(new RegExp(`Costos .*${money(d.kpis.costsThisMonth).replace(/\./g, '\\.')}`)).first()).toBeVisible()
+  })
+
   test('[P07] portal / dashboard de taller', async ({ page }) => {
     const errors = await open(page, 'taller.tc', '/taller')
     await expect(badge(page, 'P07')).toBeVisible()
     await expect(page.getByTestId('kpi-custody')).toBeVisible()
+    // RF-034: solo lo propio (custodia, órdenes, tareas, solicitudes y entregas) con los valores del servidor.
+    const tc = await apiAs('taller.tc')
+    const d = await (await tc.get('workshop-portal/dashboard')).json()
+    const g = (n: number) => `${new Intl.NumberFormat('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 4 }).format(n)} g`
+    await expect(page.getByTestId('kpi-custody')).toContainText(g(d.kpis.custodyGrams))
+    await expect(page.getByTestId('kpi-open-orders')).toContainText(String(d.kpis.openOrders))
+    await expect(page.getByTestId('kpi-pending-dispatches')).toContainText(String(d.kpis.pendingDispatches))
+    for (const o of d.orders) await expect(page.locator('main').getByText(o.number).first()).toBeVisible()
+    for (const h of ['Mis tareas', 'Órdenes asignadas', 'Material en custodia', 'Solicitudes de material']) await expect(page.locator('main').getByText(h, { exact: true }).first()).toBeVisible()
+    const others = ((await (await (await apiAs('operaciones')).get('orders?pageSize=100')).json()).items as { number: string; workshop: { code: string } }[]).filter((o) => o.workshop.code !== 'TC')
+    for (const o of others.slice(0, 5)) await expect(page.locator('main').getByText(o.number)).toHaveCount(0)
     expect(errors).toEqual([])
   })
 
   test('[P08] confirmación de entrega', async ({ page }) => {
     const errors = await open(page, 'taller.tc', `/taller/entregas/${ids.tcDispatch}`)
     await expect(badge(page, 'P08')).toBeVisible()
-    await expect(page.locator('main').getByText(/g/).first()).toBeVisible()
+    const disp = await (await (await apiAs('taller.tc')).get(`dispatches/${ids.tcDispatch}`)).json()
+    const grams = `${new Intl.NumberFormat('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 4 }).format(disp.lines[0].grams)} g`
+    await expect(page.locator('main').getByText(grams).first()).toBeVisible()
+    await expect(page.locator('main').getByText(disp.lines[0].material.name).first()).toBeVisible()
+    await expect(page.locator('main').getByText(/Enviado por .+ el \d/).first()).toBeVisible()
     await expect(page.locator('main').getByText(/firma|Firma/).first()).toBeVisible()
     expect(errors).toEqual([])
   })

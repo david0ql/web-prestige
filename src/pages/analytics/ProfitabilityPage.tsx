@@ -26,6 +26,7 @@ const GROUPS = [
   { value: 'product', label: 'Producto' },
   { value: 'customer', label: 'Cliente' },
   { value: 'workshop', label: 'Taller' },
+  { value: 'operation', label: 'Operación' },
 ]
 
 /** P16 · Rentabilidad (RF-029/030, CA-011). */

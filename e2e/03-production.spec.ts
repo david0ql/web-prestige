@@ -54,11 +54,27 @@ test.describe.serial('Producción punta a punta por la UI', () => {
     await login(page, 'taller.tc')
     await page.goto('/taller/entregas')
     await page.locator('[data-testid^="dispatch-card-"]', { hasText: orderNumber }).first().click()
+    // La confirmación muestra lo despachado: material, peso pesado, pesaje, responsable y fecha.
+    const ops = await apiAs('operaciones')
+    const orderId = orderUrl.split('/').pop()
+    const detail = await (await ops.get(`orders/${orderId}`)).json()
+    const dispatch = await (await ops.get(`dispatches/${detail.dispatches[0].id}`)).json()
+    const grams = new Intl.NumberFormat('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 4 }).format(dispatch.lines[0].grams)
+    await expect(page.locator('main').getByText(`${grams} g`).first()).toBeVisible()
+    await expect(page.locator('main').getByText(dispatch.lines[0].weighing.number).first()).toBeVisible()
+    await expect(page.locator('main').getByText(/Enviado por Cristian Ayala el \d/).first()).toBeVisible()
+    await page.getByTestId('confirm-received-0').fill(String(dispatch.lines[0].grams))
     await page.getByTestId('confirm-commitment').check()
     await page.getByTestId('confirm-signer').fill('Colmenares')
     await sign(page)
     await page.getByTestId('confirm-accept').click()
     await expect(page).toHaveURL(/\/taller\/ordenes\//)
+    // Constancia guardada: firmante, fecha y peso recibido.
+    const after = await (await ops.get(`dispatches/${dispatch.id}`)).json()
+    expect(after.status).toBe('ACCEPTED')
+    expect(after.acceptance).toMatchObject({ signerName: 'Colmenares' })
+    expect(after.acceptance.signedAt).toBeTruthy()
+    expect(after.lines[0].receivedGrams).toBeCloseTo(dispatch.lines[0].grams, 4)
   })
 
   test('P09/P10 · el taller registra etapas con fotos y videos, consumos y producto terminado', async ({ page }) => {
