@@ -4,7 +4,7 @@ import { Cable, CheckCircle2, FlaskConical, Keyboard, RotateCcw, Scale, Unplug }
 import { api, errorMessage } from '@/lib/api/client'
 import type { Weighing } from '@/lib/api/types'
 import { usePermission } from '@/lib/auth/store'
-import { useScale } from '@/lib/scale/useScale'
+import { useScale, type ScaleConfig } from '@/lib/scale/useScale'
 import { formatGrams } from '@/lib/format'
 import { cn } from '@/lib/cn'
 import { Button } from '@/components/ui/Button'
@@ -29,7 +29,7 @@ interface Props {
  */
 export function WeighingCapture({ purpose, materialId, value, onCaptured, compact, label = 'Balanza Madre', testId = 'weighing' }: Props) {
   const canManual = usePermission('scale.manual')
-  const { data: config } = useQuery({ queryKey: ['scale-config'], queryFn: () => api.get<{ baudRate: number; dataBits: number; stopBits: number; parity: string; model?: string }>('/weighings/config'), staleTime: 300_000 })
+  const { data: config } = useQuery({ queryKey: ['scale-config'], queryFn: () => api.get<ScaleConfig>('/weighings/config'), staleTime: 300_000 })
   const scale = useScale(config ?? {})
   const [manual, setManual] = useState(false)
   const [manualGrams, setManualGrams] = useState('')
@@ -113,6 +113,12 @@ export function WeighingCapture({ purpose, materialId, value, onCaptured, compac
             <Button size="sm" variant="secondary" data-testid={`${testId}-simulator`} onClick={() => scale.startSimulator(Number(simTarget) || 100)}>
               <FlaskConical className="size-3.5" /> Simulador
             </Button>
+          </>
+        )}
+        {!manual && scale.mode === 'serial' && scale.zero && (
+          <>
+            <Button size="sm" variant="secondary" data-testid={`${testId}-zero`} onClick={() => void scale.zero?.()}>Cero</Button>
+            <Button size="sm" variant="secondary" data-testid={`${testId}-tare`} onClick={() => void scale.tare?.()}>Tara en balanza</Button>
           </>
         )}
         {!manual && scale.mode === 'simulator' && (

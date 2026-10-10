@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { parseScaleReading } from './parse'
+import { MT_SICS, MT_SICS_ERRORS, mtSicsError, parseScaleReading } from './parse'
 
 /**
  * Integración con la Balanza Madre (RF-002) vía Web Serial API (Chrome/Edge en
@@ -12,12 +12,16 @@ interface SerialPortLike {
   open(o: { baudRate: number; dataBits?: number; stopBits?: number; parity?: string }): Promise<void>
   close(): Promise<void>
   readable: ReadableStream<Uint8Array> | null
+  writable?: WritableStream<Uint8Array> | null
   getInfo?: () => { usbVendorId?: number; usbProductId?: number }
 }
 
 export type ScaleMode = 'disconnected' | 'serial' | 'simulator'
 
-export function useScale(config: { baudRate?: number; dataBits?: number; stopBits?: number; parity?: string } = {}) {
+export interface ScaleConfig { baudRate?: number; dataBits?: number; stopBits?: number; parity?: string; protocol?: string; model?: string }
+
+export function useScale(config: ScaleConfig = {}) {
+  const sics = (config.protocol ?? '').toUpperCase() === 'MT-SICS'
   const [mode, setMode] = useState<ScaleMode>('disconnected')
   const [reading, setReading] = useState<ScaleReading | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -26,8 +30,20 @@ export function useScale(config: { baudRate?: number; dataBits?: number; stopBit
   const simRef = useRef<{ target: number; timer: ReturnType<typeof setInterval> | null }>({ target: 0, timer: null })
   const supported = typeof navigator !== 'undefined' && 'serial' in navigator
 
+  /** Envía un comando de texto a la balanza (MT-SICS: SIR, Z, T, @). */
+  const send = useCallback(async (command: string) => {
+    const w = portRef.current?.writable?.getWriter()
+    if (!w) return
+    try {
+      await w.write(new TextEncoder().encode(command))
+    } finally {
+      w.releaseLock()
+    }
+  }, [])
+
   const disconnect = useCallback(async () => {
     try {
+      if (sics && portRef.current) await send(MT_SICS.stop)
       await readerRef.current?.cancel()
       await portRef.current?.close()
     } catch {
@@ -38,7 +54,7 @@ export function useScale(config: { baudRate?: number; dataBits?: number; stopBit
     readerRef.current = null
     portRef.current = null
     setMode('disconnected')
-  }, [])
+  }, [sics, send])
 
   const connectSerial = useCallback(async () => {
     setError(null)
@@ -52,6 +68,8 @@ export function useScale(config: { baudRate?: number; dataBits?: number; stopBit
       await port.open({ baudRate: config.baudRate ?? 9600, dataBits: config.dataBits ?? 8, stopBits: config.stopBits ?? 1, parity: config.parity ?? 'none' })
       portRef.current = port
       setMode('serial')
+      // MT-SICS: pedir el peso de forma continua (estable «S S» o en movimiento «S D»).
+      if (sics) await send(MT_SICS.streamWeight)
       const decoder = new TextDecoder()
       let buffer = ''
       const reader = port.readable!.getReader()
@@ -63,15 +81,25 @@ export function useScale(config: { baudRate?: number; dataBits?: number; stopBit
         const lines = buffer.split(/\r?\n/)
         buffer = lines.pop() ?? ''
         for (const line of lines) {
+          if (!line.trim()) continue
+          const status = mtSicsError(line)
+          if (status) {
+            setError(MT_SICS_ERRORS[status])
+            setReading(null)
+            continue
+          }
           const parsed = parseScaleReading(line)
-          if (parsed) setReading({ ...parsed, raw: line.trim(), at: Date.now() })
+          if (parsed) {
+            setError(null)
+            setReading({ ...parsed, raw: line.trim(), at: Date.now() })
+          }
         }
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : 'No se pudo conectar la balanza')
       setMode('disconnected')
     }
-  }, [config.baudRate, config.dataBits, config.stopBits, config.parity, supported])
+  }, [config.baudRate, config.dataBits, config.stopBits, config.parity, supported, sics, send])
 
   /** Simulador: oscila unos instantes y luego estabiliza en el peso objetivo. */
   const startSimulator = useCallback((target = 100) => {
@@ -101,5 +129,8 @@ export function useScale(config: { baudRate?: number; dataBits?: number; stopBit
 
   useEffect(() => () => void disconnect(), [disconnect])
 
-  return { supported, mode, reading, error, connectSerial, startSimulator, setSimulatedWeight, disconnect }
+  const zero = useCallback(() => send(MT_SICS.zero), [send])
+  const tare = useCallback(() => send(MT_SICS.tare), [send])
+
+  return { supported, mode, reading, error, connectSerial, startSimulator, setSimulatedWeight, disconnect, protocol: sics ? 'MT-SICS' : 'genérico', zero: sics ? zero : undefined, tare: sics ? tare : undefined }
 }
