@@ -1,8 +1,17 @@
 import { Outlet } from '@tanstack/react-router'
+import { useUser } from '@/lib/auth/store'
 import { Sidebar } from './Sidebar'
 import { Topbar } from './Topbar'
 
 export function AppShell() {
+  const user = useUser()
+  // Mientras deba cambiar la contraseña: solo la pantalla de perfil, sin menú ni consultas.
+  if (user?.mustChangePassword)
+    return (
+      <main className="mx-auto min-h-dvh w-full max-w-3xl bg-page px-4 py-8">
+        <Outlet />
+      </main>
+    )
   return (
     <div className="flex min-h-dvh">
       <Sidebar />

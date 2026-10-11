@@ -26,8 +26,6 @@ test.describe.serial('Administración, catálogo, control y aislamiento por la U
     await selectOption(page, 'user-role', 'Taller')
     await selectOption(page, 'user-workshop', 'ALX')
     await page.getByTestId('user-password').fill('TallerAlex.2026')
-    const mustChange = page.getByRole('checkbox', { name: /cambiar/i })
-    if (await mustChange.count()) await mustChange.first().click()
     await page.getByTestId('user-save').click()
     await expect(page.getByTestId('users-table')).toContainText('taller.alx')
     await logout(page)
@@ -36,6 +34,12 @@ test.describe.serial('Administración, catálogo, control y aislamiento por la U
     await page.getByTestId('login-username').fill('taller.alx')
     await page.getByTestId('login-password').fill('TallerAlex.2026')
     await page.getByTestId('login-submit').click()
+    // Usuario nuevo con contraseña inicial: primero define la suya.
+    await expect(page.getByTestId('must-change-password')).toBeVisible()
+    await page.getByTestId('profile-current').fill('TallerAlex.2026')
+    await page.getByTestId('profile-new').fill('TallerAlex.Propia.2026')
+    await page.getByTestId('profile-confirm').fill('TallerAlex.Propia.2026')
+    await page.getByTestId('profile-submit').click()
     await expect(page.getByText('Taller ALX', { exact: true })).toBeVisible()
   })
 

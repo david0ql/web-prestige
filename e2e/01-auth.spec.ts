@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { login, logout, PASSWORD } from './fixtures'
+import { apiAs, login, logout, PASSWORD } from './fixtures'
 
 test.describe('P01 · Acceso y roles', () => {
   test('protege rutas y redirige al login conservando el destino', async ({ page }) => {
@@ -84,4 +84,30 @@ test.describe('P01 · Acceso y roles', () => {
     await page.getByTestId('mobile-menu').click()
     await expect(page.getByTestId('nav-taller-ordenes').last()).toBeVisible()
   })
+})
+
+test('[SEC] contraseña inicial: el usuario debe cambiarla antes de usar el sistema', async ({ page }) => {
+  const admin = await apiAs('admin')
+  const roles = (await (await admin.get('roles')).json()) as { id: string; code: string }[]
+  const res = await admin.post('users', { data: { username: 'clave.inicial', email: 'clave.inicial@e2e.local', fullName: 'Clave Inicial', password: 'Inicial.12345', roleId: roles.find((r) => r.code === 'OPERATIONS')!.id, mustChangePassword: true } })
+  expect(res.status()).toBe(201)
+  await page.goto('/login')
+  await page.getByTestId('login-username').fill('clave.inicial')
+  await page.getByTestId('login-password').fill('Inicial.12345')
+  await page.getByTestId('login-submit').click()
+  await expect(page).toHaveURL(/\/perfil$/)
+  await expect(page.getByTestId('must-change-password')).toBeVisible()
+  await expect(page.getByTestId('nav-dashboard')).toHaveCount(0)
+  // Intentar navegar a otra pantalla vuelve al perfil.
+  await page.goto('/inventario')
+  await expect(page).toHaveURL(/\/perfil$/)
+  await page.getByTestId('profile-current').fill('Inicial.12345')
+  await page.getByTestId('profile-new').fill('Propia.Segura.2026')
+  await page.getByTestId('profile-confirm').fill('Propia.Segura.2026')
+  await page.getByTestId('profile-submit').click()
+  await expect(page).not.toHaveURL(/\/perfil$/)
+  await expect(page.getByTestId('must-change-password')).toHaveCount(0)
+  await page.goto('/inventario')
+  await expect(page).toHaveURL(/\/inventario$/)
+  await expect(page.getByTestId('nav-dashboard')).toBeVisible()
 })

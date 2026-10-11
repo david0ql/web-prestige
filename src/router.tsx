@@ -39,6 +39,8 @@ const appRoute = createRoute({
   beforeLoad: async ({ location }) => {
     const user = await ensureSession()
     if (!user) throw redirect({ to: '/login', search: { redirect: location.href } })
+    // Contraseña inicial/restablecida: primero debe cambiarla (la API bloquea todo lo demás).
+    if (user.mustChangePassword && location.pathname !== '/perfil') throw redirect({ to: '/perfil' })
   },
   component: AppShell,
 })

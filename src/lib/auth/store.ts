@@ -10,6 +10,8 @@ export interface AuthUser {
   workshopId: string | null
   workshopCode: string | null
   permissions: string[]
+  /** Contraseña inicial o restablecida: debe cambiarla antes de operar. */
+  mustChangePassword?: boolean
   sessionId: string
 }
 
@@ -19,6 +21,7 @@ interface AuthState {
   user: AuthUser | null
   ready: boolean
   setSession: (token: string, user: AuthUser) => void
+  setUser: (user: AuthUser) => void
   clear: () => void
   setReady: () => void
 }
@@ -28,6 +31,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   ready: false,
   setSession: (accessToken, user) => set({ accessToken, user }),
+  setUser: (user) => set({ user }),
   clear: () => set({ accessToken: null, user: null }),
   setReady: () => set({ ready: true }),
 }))

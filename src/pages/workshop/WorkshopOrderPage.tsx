@@ -139,7 +139,7 @@ function OrderView({ o, media, catalogStages, allVars }: { o: OrderDetail; media
             <p className="flex-1 text-[14px]"><strong>Primero confirma la entrega de material.</strong> Al aceptarla y firmar el compromiso podrás registrar la producción.</p>
             {pendingDispatch && (
               <Link to="/taller/entregas/$dispatchId" params={{ dispatchId: pendingDispatch.id }}>
-                <Button className="w-full sm:w-auto">Confirmar entrega</Button>
+                <Button className="h-11 w-full px-4 text-[14px] sm:w-auto">Confirmar entrega</Button>
               </Link>
             )}
           </div>
