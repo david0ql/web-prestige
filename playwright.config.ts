@@ -1,4 +1,8 @@
+import { existsSync } from 'node:fs'
 import { defineConfig, devices } from '@playwright/test'
+
+/** API hermana: ../api (monorepo) o ../api-prestige (repositorios separados). Sobrescribible con API_DIR. */
+const API_DIR = process.env.API_DIR ?? (existsSync('../api/package.json') ? '../api' : '../api-prestige')
 
 /**
  * Pruebas de clic (end-to-end) sobre un ambiente aislado:
@@ -32,7 +36,7 @@ export default defineConfig({
   webServer: [
     {
       command: 'node dist/main',
-      cwd: '../api',
+      cwd: API_DIR,
       port: API_PORT,
       reuseExistingServer: false,
       timeout: 60_000,
